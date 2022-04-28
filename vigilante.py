@@ -34,7 +34,7 @@ def update_nodes(nodes):
             nodes_record.write(nodename)
             nodes_record.write('\n')
 
-def vigilante(sleeptime=60, lifetime=3600, **kwargs):
+def vigilante(username='', sleeptime=60, lifetime=3600, **kwargs):
     """Utility function to keep submitting jobs on a cluster.
        This script is intended to checkup on the running jobs, call
        for post-processing scripts, and re-submit jobs that did not
@@ -45,6 +45,8 @@ def vigilante(sleeptime=60, lifetime=3600, **kwargs):
        
        Arguments:
        -----------------
+       - username: Your username in the submission cluster
+       
        - sleeptime: The time (in seconds) to wait between checkups of 
         the running jobs
 
@@ -74,11 +76,11 @@ def vigilante(sleeptime=60, lifetime=3600, **kwargs):
         nodes = set()
     
     while time() - starting_time < lifetime:
-        running_processes = check_queue()
+        running_processes = check_queue(username)
         print(running_processes)
 
         if len(running_processes) > 2:
-            current_nodes = collect_nodes()
+            current_nodes = collect_nodes(username)
 
             if current_nodes.difference(nodes) != set():
                 nodes = nodes.union(current_nodes)
